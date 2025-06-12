@@ -3,242 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎰 MEGA SLOT JACKPOT 🎰</title>
+    <title>MEGA SLOT</title>
     <style>
-        * {
+        body {
             margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            overflow: hidden;
+            background-color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+            color: #eee;
         }
 
-        body {
-            font-family: 'Arial Black', Arial, sans-serif;
-            background: linear-gradient(45deg, #1a1a2e, #16213e, #0f3460);
-            background-size: 400% 400%;
-            animation: gradientShift 3s ease infinite;
-            color: #fff;
-            overflow-x: hidden;
-            min-height: 100vh;
+        .slot-container {
+            background-color: #222;
+            border: 5px solid #FFD700; /* Gold border */
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.8); /* Gold glow */
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        .slot-container::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 10px solid rgba(255, 215, 0, 0.3); /* Lighter gold glow */
+            border-radius: 25px;
+            z-index: -1;
+        }
+
+        h1 {
+            color: #FFD700; /* Gold text */
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+            font-size: 2.5em;
+            margin-bottom: 20px;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
         }
 
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+        h1 img {
+            height: 1em;
+            margin: 0 10px;
         }
 
-        .game-container {
-            background: linear-gradient(135deg, #2c1810, #4a2c2a);
-            border: 5px solid #ffd700;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 0 50px rgba(255, 215, 0, 0.5), inset 0 0 30px rgba(255, 215, 0, 0.1);
-            text-align: center;
-            max-width: 500px;
-            width: 90%;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .game-container::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.1), transparent);
-            animation: shine 2s linear infinite;
-            pointer-events: none;
-        }
-
-        @keyframes shine {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-        }
-
-        .title {
-            font-size: 2.5em;
-            color: #ffd700;
-            text-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700;
-            margin-bottom: 20px;
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .slot-machine {
-            background: linear-gradient(135deg, #1a1a1a, #333);
-            border: 3px solid #ffd700;
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
-            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
-        }
-
-        .reels-container {
+        .reels {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            margin: 20px 0;
+            margin-bottom: 30px;
+            background-color: #111;
+            border-radius: 10px;
+            padding: 15px 0;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
         }
 
         .reel {
-            width: 80px;
+            width: 100px;
             height: 120px;
-            background: linear-gradient(135deg, #000, #222);
-            border: 2px solid #ffd700;
-            border-radius: 10px;
+            border: 3px solid #FFD700;
+            border-radius: 8px;
+            margin: 0 10px;
             overflow: hidden;
             position: relative;
-            box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.3);
+            background-color: #000;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
         }
 
-        .reel-symbols {
+        .reel-inner {
             position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            transition: transform 0.1s ease;
+            transition: transform 0.1s linear; /* Smooth transition for stopping */
         }
 
         .symbol {
+            width: 100px;
             height: 120px;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             font-size: 3em;
-            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
-            border-bottom: 1px solid #444;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+
+        .symbol img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
         }
 
         .spin-button {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-            border: none;
+            background-color: #FF4500; /* OrangeRed */
             color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 15px 30px;
             font-size: 1.5em;
             font-weight: bold;
-            padding: 15px 40px;
-            border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            box-shadow: 0 5px 15px rgba(255, 69, 0, 0.5);
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
         }
 
         .spin-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+            background-color: #FF6347; /* Tomato */
+            transform: translateY(-2px);
         }
 
         .spin-button:active {
             transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(255, 69, 0, 0.5);
         }
 
         .spin-button:disabled {
-            background: #666;
+            background-color: #888;
             cursor: not-allowed;
-            transform: none;
             box-shadow: none;
         }
 
-        .result-display {
-            margin: 20px 0;
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .spin-button img {
+            height: 1.2em;
+            margin-right: 10px;
         }
 
-        .win-message {
+        .result-message {
+            margin-top: 20px;
             font-size: 1.8em;
-            color: #ffd700;
-            text-shadow: 0 0 20px #ffd700;
-            animation: winFlash 0.5s ease-in-out infinite;
-        }
-
-        @keyframes winFlash {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+            font-weight: bold;
+            color: #FFD700; /* Gold */
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+            min-height: 1.8em;
         }
 
         .code-display {
-            background: linear-gradient(135deg, #0f4c75, #3282b8);
-            border: 2px solid #ffd700;
-            border-radius: 10px;
-            padding: 15px;
-            margin: 15px 0;
+            margin-top: 10px;
             font-size: 1.5em;
+            color: #00FF00; /* Bright Green */
             font-weight: bold;
-            letter-spacing: 3px;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            text-shadow: 0 0 8px rgba(0, 255, 0, 0.7);
+            min-height: 1.5em;
         }
 
-        .jackpot-effect {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(255, 215, 0, 0.3), transparent);
-            pointer-events: none;
-            opacity: 0;
-            animation: jackpotFlash 0.5s ease-in-out;
+        .footer-message {
+            margin-top: 30px;
+            font-size: 1.1em;
+            color: #aaa;
         }
 
-        @keyframes jackpotFlash {
-            0%, 100% { opacity: 0; }
-            50% { opacity: 1; }
+        .footer-message span {
+            color: #00FF00;
         }
 
-        .probability-info {
-            font-size: 0.8em;
-            color: #ccc;
-            margin-top: 20px;
-            opacity: 0.7;
+        @media (max-width: 768px) {
+            .reel {
+                width: 80px;
+                height: 100px;
+                margin: 0 5px;
+            }
+
+            .symbol {
+                font-size: 2.5em;
+            }
+
+            .spin-button {
+                padding: 12px 25px;
+                font-size: 1.3em;
+            }
+
+            .result-message {
+                font-size: 1.5em;
+            }
+
+            .code-display {
+                font-size: 1.2em;
+            }
         }
 
-        @media (max-width: 600px) {
-            .title { font-size: 2em; }
-            .reel { width: 70px; height: 100px; }
-            .symbol { height: 100px; font-size: 2.5em; }
-            .spin-button { font-size: 1.2em; padding: 12px 30px; }
+        @media (max-width: 480px) {
+            .reel {
+                width: 70px;
+                height: 90px;
+                margin: 0 3px;
+            }
+
+            .symbol {
+                font-size: 2em;
+            }
+
+            .spin-button {
+                padding: 10px 20px;
+                font-size: 1.1em;
+            }
+
+            .result-message {
+                font-size: 1.3em;
+            }
+
+            .code-display {
+                font-size: 1em;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="game-container">
-        <h1 class="title">🎰 MEGA SLOT 🎰</h1>
-        
-        <div class="slot-machine">
-            <div class="reels-container">
-                <div class="reel" id="reel1">
-                    <div class="reel-symbols" id="symbols1"></div>
-                </div>
-                <div class="reel" id="reel2">
-                    <div class="reel-symbols" id="symbols2"></div>
-                </div>
-                <div class="reel" id="reel3">
-                    <div class="reel-symbols" id="symbols3"></div>
-                </div>
-            </div>
-            
-            <button class="spin-button" id="spinButton" onclick="spin()">
-                🎲 SPIN 🎲
-            </button>
+    <div class="slot-container">
+        <h1>
+            <img src="https://www.svgrepo.com/show/499368/slot-machine.svg" alt="Slot Machine Icon">
+            MEGA SLOT
+            <img src="https://www.svgrepo.com/show/499368/slot-machine.svg" alt="Slot Machine Icon">
+        </h1>
+        <div class="reels">
+            <div class="reel" id="reel1"><div class="reel-inner"></div></div>
+            <div class="reel" id="reel2"><div class="reel-inner"></div></div>
+            <div class="reel" id="reel3"><div class="reel-inner"></div></div>
         </div>
-        
-        <div class="result-display" id="resultDisplay"></div>
-        
-        <div class="probability-info">
-            <p>🍀 運試しをしてみよう！ 🍀</p>
-            <p>特別なコードをゲットしてお得な特典を受け取ろう！</p>
-        </div>
+        <button class="spin-button" id="spinButton">
+            <img src="https://www.svgrepo.com/show/499369/dice.svg" alt="Dice Icon">
+            SPINNING...
+        </button>
+        <div class="result-message" id="resultMessage"></div>
+        <div class="code-display" id="codeDisplay"></div>
+        <p class="footer-message"><span>🍀</span> 運試しをしてみよう！ <span>🍀</span></p>
+        <p class="footer-message">特別なコードをゲットしてお得な特典を受け取ろう！</p>
     </div>
 
     <script src="game-manager.js"></script>
@@ -246,177 +249,117 @@
         // ゲーム設定
         const reelCount = 3;
         let isSpinning = false;
+        const spinButton = document.getElementById('spinButton' );
+        const resultMessage = document.getElementById('resultMessage');
+        const codeDisplay = document.getElementById('codeDisplay');
+        const reels = [];
+        const reelInners = [];
+
+        // ゲームマネージャーのインスタンス化
+        const gameManager = new SlotGameManager();
 
         // リール初期化
         async function initializeReels() {
-            console.log('initializeReels called');
-            // ゲームマネージャーの設定読み込みを待つ
-            await gameManager.loadConfig();
-            console.log('config loaded:', gameManager.config);
-            
+            const symbols = gameManager.getSymbols();
             for (let i = 1; i <= reelCount; i++) {
-                const symbolsContainer = document.getElementById(`symbols${i}`);
-                symbolsContainer.innerHTML = '';
-                
-                // 複数のシンボルを作成（スクロール効果用）
-                console.log('Populating reels with symbols');
-                for (let j = 0; j < 20; j++) {
+                const reelInner = document.getElementById(`reel${i}`).querySelector('.reel-inner');
+                reelInners.push(reelInner);
+                // シンボルを複数回追加して無限スクロールをシミュレート
+                for (let j = 0; j < 30; j++) { // 十分な数のシンボルを追加
                     const symbolDiv = document.createElement('div');
-                    symbolDiv.className = 'symbol';
-                    symbolDiv.textContent = gameManager.config.symbols[Math.floor(Math.random() * gameManager.config.symbols.length)];
-                    symbolsContainer.appendChild(symbolDiv);
+                    symbolDiv.classList.add('symbol');
+                    const img = document.createElement('img');
+                    img.src = symbols[Math.floor(Math.random() * symbols.length)].src;
+                    img.alt = 'symbol';
+                    symbolDiv.appendChild(img);
+                    reelInner.appendChild(symbolDiv);
                 }
+                reels.push(reelInner);
             }
-        }
-
-        // コード生成（ゲームマネージャーに委譲）
-        function generateCode(type) {
-            return gameManager.generateCode(type);
-        }
-
-        // 当選判定（ゲームマネージャーに委譲）
-        function determineResult() {
-            return gameManager.determineResult();
-        }
-
-        // 結果に基づいてシンボルを設定（ゲームマネージャーに委譲）
-        function setResultSymbols(result) {
-            return gameManager.setResultSymbols(result);
-        }
-
-        // リール回転アニメーション
-        function animateReel(reelIndex, finalSymbol, duration) {
-            return new Promise((resolve) => {
-                const symbolsContainer = document.getElementById(`symbols${reelIndex}`);
-                const symbolHeight = 120;
-                let currentPosition = 0;
-                const spinSpeed = 20;
-                const totalSpins = duration / spinSpeed;
-                let spinsCompleted = 0;
-
-                const spinInterval = setInterval(() => {
-                    currentPosition -= symbolHeight;
-                    symbolsContainer.style.transform = `translateY(${currentPosition}px)`;
-                    
-                    spinsCompleted++;
-                    
-                    if (spinsCompleted >= totalSpins) {
-                        clearInterval(spinInterval);
-                        
-                        // 最終シンボルを設定
-                        const symbols = symbolsContainer.children;
-                        symbols[0].textContent = finalSymbol;
-                        symbolsContainer.style.transform = 'translateY(0px)';
-                        
-                        resolve();
-                    }
-                }, spinSpeed);
+            // 初期位置を調整
+            reels.forEach(reel => {
+                reel.style.transform = `translateY(-${(reel.children.length - 3) * 120}px)`;
             });
         }
 
-        // ジャックポット効果
-        function showJackpotEffect() {
-            const effect = document.createElement('div');
-            effect.className = 'jackpot-effect';
-            document.body.appendChild(effect);
-            
-            setTimeout(() => {
-                document.body.removeChild(effect);
-            }, 500);
-        }
+        // スピン処理
+        spinButton.addEventListener('click', async () => {
+            if (isSpinning) return;
+            isSpinning = true;
+            spinButton.disabled = true;
+            spinButton.textContent = 'SPINNING...';
+            resultMessage.textContent = '';
+            codeDisplay.textContent = '';
+
+            const finalSymbols = gameManager.spin();
+
+            const spinPromises = reels.map((reel, index) => {
+                return new Promise(resolve => {
+                    const symbolHeight = 120; // シンボル一つの高さ
+                    const totalSymbolsInReel = reel.children.length;
+                    const targetSymbolIndex = gameManager.getSymbolIndex(finalSymbols[index].name); // 最終的に表示されるシンボルのインデックス
+
+                    // 停止位置を計算: 最後の数個のシンボルの中からランダムに停止位置を選ぶ
+                    // ここでは、リールの一番下から3番目のシンボルが最終結果になるように調整
+                    const stopPosition = (totalSymbolsInReel - 3 + targetSymbolIndex) * symbolHeight;
+
+                    // スピンアニメーション
+                    reel.style.transition = 'none'; // 一旦トランジションを無効化
+                    reel.style.transform = `translateY(0px)`; // リールを初期位置に戻す
+
+                    setTimeout(() => {
+                        const spinDuration = 3000 + index * 500; // リールごとに異なる停止時間
+                        reel.style.transition = `transform ${spinDuration / 1000}s cubic-bezier(0.25, 0.1, 0.25, 1)`;
+                        reel.style.transform = `translateY(-${stopPosition}px)`;
+
+                        reel.addEventListener('transitionend', function handler() {
+                            reel.removeEventListener('transitionend', handler);
+                            resolve();
+                        });
+                    }, 50); // 短い遅延を入れてtransitionをリセット
+                });
+            });
+
+            await Promise.all(spinPromises);
+
+            // 結果表示
+            displayResult(finalSymbols);
+
+            isSpinning = false;
+            spinButton.disabled = false;
+            spinButton.textContent = 'SPIN!';
+        });
 
         // 結果表示
-        function displayResult(result, finalSymbols) {
-            const resultDisplay = document.getElementById('resultDisplay');
-            
-            if (result !== 'lose') {
-                const pattern = gameManager.config.winPatterns[result];
-                const code = generateCode(result);
-                
-                if (result === 'jackpot') {
-                    showJackpotEffect();
-                }
-                
-                resultDisplay.innerHTML = `
-                    <div class="win-message">${pattern.message}</div>
-                    <div class="code-display">コード: ${code}</div>
-                `;
-                
-                // 統計を更新
-                gameManager.updateStatistics(result);
-            } else {
-                resultDisplay.innerHTML = `
-                    <div style="color: #ccc; font-size: 1.2em;">
-                        残念！もう一度チャレンジ！
-                    </div>
-                `;
-                
-                // 統計を更新
-                gameManager.updateStatistics(result);
+        function displayResult(finalSymbols) {
+            const result = gameManager.checkWin(finalSymbols);
+            resultMessage.textContent = result.message;
+            if (result.code) {
+                codeDisplay.textContent = `特典コード: ${result.code}`;
             }
-            
-            // 設定を保存
-            gameManager.saveConfig();
-        }
-
-        // メインのスピン関数
-        async function spin() {
-            if (isSpinning) return;
-            
-            isSpinning = true;
-            const spinButton = document.getElementById('spinButton');
-            spinButton.disabled = true;
-            spinButton.textContent = '🎲 SPINNING... 🎲';
-            
-            // 結果を事前に決定
-            const result = determineResult();
-            const finalSymbols = setResultSymbols(result);
-            
-            // 結果表示をクリア
-            document.getElementById('resultDisplay').innerHTML = '';
-            
-            // 各リールを順番にアニメーション
-            const animationPromises = [];
-            for (let i = 0; i < reelCount; i++) {
-                const duration = 1000 + (i * 500); // 段階的に停止
-                animationPromises.push(
-                    animateReel(i + 1, finalSymbols[i], duration)
-                );
-            }
-            
-            // すべてのアニメーションが完了するまで待機
-            await Promise.all(animationPromises);
-            
-            // 結果表示
-            setTimeout(() => {
-                displayResult(result, finalSymbols);
-                
-                // ボタンを再有効化
-                spinButton.disabled = false;
-                spinButton.textContent = '🎲 SPIN 🎲';
-                isSpinning = false;
-            }, 500);
-        }
-
-        // 確率設定を外部から変更する関数
-        function updateProbabilities(newProbabilities) {
-            gameManager.updateProbabilities(newProbabilities);
-        }
-
-        // 統計情報を取得する関数
-        function getStatistics() {
-            return gameManager.getStatistics();
         }
 
         // 初期化
         document.addEventListener('DOMContentLoaded', async () => {
-            console.log("DOMContentLoaded event fired.");
             await initializeReels();
-            console.log("initializeReels completed.");
             gameManager.loadSavedConfig();
-            console.log("gameManager.loadSavedConfig completed.");
         });
+
+        // 確率設定を外部から変更する関数 (管理画面から呼び出すことを想定)
+        function updateProbabilities(newProbabilities) {
+            gameManager.updateProbabilities(newProbabilities);
+        }
+
+        // 統計情報を取得する関数 (管理画面から呼び出すことを想定)
+        function getStats() {
+            return gameManager.getStats();
+        }
+
+        // コード履歴を取得する関数 (管理画面から呼び出すことを想定)
+        function getCodeHistory() {
+            return gameManager.getCodeHistory();
+        }
+
     </script>
 </body>
 </html>
-
