@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎰 スロットゲーム管理画面</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.8;
+            font-size: 1.1em;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #3498db;
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .probability-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .probability-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .probability-item:hover {
+            border-color: #3498db;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .probability-item h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .probability-item .current-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #e74c3c;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60, #229954);
+        }
+
+        .btn-success:hover {
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: #3498db;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h3 {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card .value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .code-history {
+            max-height: 400px;
+            overflow-y: auto;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+        }
+
+        .code-item {
+            padding: 15px;
+            border-bottom: 1px solid #f1f2f6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .code-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .code-item:last-child {
+            border-bottom: none;
+        }
+
+        .code-value {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #2c3e50;
+        }
+
+        .code-type {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .code-type.jackpot {
+            background: #f39c12;
+            color: white;
+        }
+
+        .code-type.bigWin {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .code-type.smallWin {
+            background: #27ae60;
+            color: white;
+        }
+
+        .code-timestamp {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .game-preview {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+        }
+
+        .game-preview iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .probability-grid,
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎰 スロットゲーム管理画面</h1>
+            <p>確率設定・統計管理・コード履歴</p>
+        </div>
+
+        <div class="content">
+            <!-- 確率設定セクション -->
+            <div class="section">
+                <h2>⚙️ 確率設定</h2>
+                <div id="probabilityAlert"></div>
+                
+                <div class="probability-grid">
+                    <div class="probability-item">
+                        <h3>🎉 ジャックポット</h3>
+                        <div class="current-value" id="currentJackpot">1.0%</div>
+                        <div class="form-group">
+                            <label for="jackpotProb">確率 (%)</label>
+                            <input type="number" id="jackpotProb" min="0" max="100" step="0.1" value="1.0">
+                        </div>
+                    </div>
+                    
+                    <div class="probability-item">
+                        <h3>🎊 ビッグウィン</h3>
+                        <div class="current-value" id="currentBigWin">5.0%</div>
+                        <div class="form-group">
+                            <label for="bigWinProb">確率 (%)</label>
+                            <input type="number" id="bigWinProb" min="0" max="100" step="0.1" value="5.0">
+                        </div>
+                    </div>
+                    
+                    <div class="probability-item">
+                        <h3>✨ スモールウィン</h3>
+                        <div class="current-value" id="currentSmallWin">15.0%</div>
+                        <div class="form-group">
+                            <label for="smallWinProb">確率 (%)</label>
+                            <input type="number" id="smallWinProb" min="0" max="100" step="0.1" value="15.0">
+                        </div>
+                    </div>
+                    
+                    <div class="probability-item">
+                        <h3>💔 ハズレ</h3>
+                        <div class="current-value" id="currentLose">79.0%</div>
+                        <div class="form-group">
+                            <label>確率 (自動計算)</label>
+                            <input type="text" id="loseProb" value="79.0%" readonly style="background: #f8f9fa;">
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-success" onclick="updateProbabilities()">
+                    💾 確率を更新
+                </button>
+                
+                <button class="btn" onclick="resetProbabilities()">
+                    🔄 デフォルトに戻す
+                </button>
+            </div>
+
+            <!-- 統計情報セクション -->
+            <div class="section">
+                <h2>📊 統計情報</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>総スピン回数</h3>
+                        <div class="value" id="totalSpins">0</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>勝率</h3>
+                        <div class="value" id="winRate">0%</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>ジャックポット</h3>
+                        <div class="value" id="jackpotWins">0</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>ビッグウィン</h3>
+                        <div class="value" id="bigWinWins">0</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>スモールウィン</h3>
+                        <div class="value" id="smallWinWins">0</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>発行コード数</h3>
+                        <div class="value" id="totalCodes">0</div>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="refreshStats()">
+                    🔄 統計を更新
+                </button>
+                
+                <button class="btn btn-danger" onclick="clearStats()">
+                    🗑️ 統計をクリア
+                </button>
+            </div>
+
+            <!-- コード履歴セクション -->
+            <div class="section">
+                <h2>📝 コード履歴</h2>
+                
+                <div class="code-history" id="codeHistory">
+                    <div style="padding: 20px; text-align: center; color: #7f8c8d;">
+                        まだコードが生成されていません
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="exportCodes()">
+                    📥 コードをエクスポート
+                </button>
+                
+                <button class="btn btn-danger" onclick="clearCodes()">
+                    🗑️ 履歴をクリア
+                </button>
+            </div>
+
+            <!-- ゲームプレビューセクション -->
+            <div class="section">
+                <h2>🎮 ゲームプレビュー</h2>
+                
+                <div class="game-preview">
+                    <iframe src="index.html" title="スロットゲーム"></iframe>
+                </div>
+                
+                <button class="btn" onclick="openGameInNewTab()">
+                    🚀 新しいタブでゲームを開く
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game-manager.js"></script>
+    <script>
+        // 管理画面の初期化
+        document.addEventListener('DOMContentLoaded', async () => {
+            await gameManager.loadConfig();
+            loadCurrentSettings();
+            refreshStats();
+            refreshCodeHistory();
+            
+            // 確率入力の自動計算
+            ['jackpotProb', 'bigWinProb', 'smallWinProb'].forEach(id => {
+                document.getElementById(id).addEventListener('input', calculateLoseProb);
+            });
+        });
+
+        // 現在の設定を読み込み
+        function loadCurrentSettings() {
+            if (!gameManager.config) return;
+            
+            const probs = gameManager.config.probabilities;
+            document.getElementById('jackpotProb').value = (probs.jackpot * 100).toFixed(1);
+            document.getElementById('bigWinProb').value = (probs.bigWin * 100).toFixed(1);
+            document.getElementById('smallWinProb').value = (probs.smallWin * 100).toFixed(1);
+            
+            updateCurrentValues();
+            calculateLoseProb();
+        }
+
+        // 現在値の表示を更新
+        function updateCurrentValues() {
+            if (!gameManager.config) return;
+            
+            const probs = gameManager.config.probabilities;
+            document.getElementById('currentJackpot').textContent = (probs.jackpot * 100).toFixed(1) + '%';
+            document.getElementById('currentBigWin').textContent = (probs.bigWin * 100).toFixed(1) + '%';
+            document.getElementById('currentSmallWin').textContent = (probs.smallWin * 100).toFixed(1) + '%';
+            document.getElementById('currentLose').textContent = (probs.lose * 100).toFixed(1) + '%';
+        }
+
+        // ハズレ確率の自動計算
+        function calculateLoseProb() {
+            const jackpot = parseFloat(document.getElementById('jackpotProb').value) || 0;
+            const bigWin = parseFloat(document.getElementById('bigWinProb').value) || 0;
+            const smallWin = parseFloat(document.getElementById('smallWinProb').value) || 0;
+            
+            const lose = Math.max(0, 100 - jackpot - bigWin - smallWin);
+            document.getElementById('loseProb').value = lose.toFixed(1) + '%';
+            
+            // 合計が100%を超える場合の警告
+            const total = jackpot + bigWin + smallWin;
+            const alertDiv = document.getElementById('probabilityAlert');
+            
+            if (total > 100) {
+                alertDiv.innerHTML = '<div class="alert alert-error">⚠️ 確率の合計が100%を超えています！</div>';
+            } else if (total < 99.9) {
+                alertDiv.innerHTML = '<div class="alert alert-warning">ℹ️ ハズレ確率: ' + lose.toFixed(1) + '%</div>';
+            } else {
+                alertDiv.innerHTML = '';
+            }
+        }
+
+        // 確率の更新
+        function updateProbabilities() {
+            const jackpot = parseFloat(document.getElementById('jackpotProb').value) / 100;
+            const bigWin = parseFloat(document.getElementById('bigWinProb').value) / 100;
+            const smallWin = parseFloat(document.getElementById('smallWinProb').value) / 100;
+            const lose = Math.max(0, 1 - jackpot - bigWin - smallWin);
+            
+            if (jackpot + bigWin + smallWin > 1) {
+                alert('確率の合計が100%を超えています！');
+                return;
+            }
+            
+            const newProbabilities = {
+                jackpot: jackpot,
+                bigWin: bigWin,
+                smallWin: smallWin,
+                lose: lose
+            };
+            
+            gameManager.updateProbabilities(newProbabilities);
+            gameManager.saveConfig();
+            updateCurrentValues();
+            
+            document.getElementById('probabilityAlert').innerHTML = 
+                '<div class="alert alert-success">✅ 確率が正常に更新されました！</div>';
+            
+            setTimeout(() => {
+                document.getElementById('probabilityAlert').innerHTML = '';
+            }, 3000);
+        }
+
+        // デフォルト確率に戻す
+        function resetProbabilities() {
+            if (confirm('確率をデフォルト値に戻しますか？')) {
+                document.getElementById('jackpotProb').value = '1.0';
+                document.getElementById('bigWinProb').value = '5.0';
+                document.getElementById('smallWinProb').value = '15.0';
+                calculateLoseProb();
+                updateProbabilities();
+            }
+        }
+
+        // 統計情報の更新
+        function refreshStats() {
+            const stats = gameManager.getStatistics();
+            
+            document.getElementById('totalSpins').textContent = stats.totalSpins;
+            document.getElementById('winRate').textContent = stats.winRate;
+            document.getElementById('jackpotWins').textContent = stats.wins.jackpot;
+            document.getElementById('bigWinWins').textContent = stats.wins.bigWin;
+            document.getElementById('smallWinWins').textContent = stats.wins.smallWin;
+            document.getElementById('totalCodes').textContent = stats.codesGenerated.length;
+        }
+
+        // 統計のクリア
+        function clearStats() {
+            if (confirm('統計データをすべてクリアしますか？この操作は取り消せません。')) {
+                gameManager.statistics = {
+                    totalSpins: 0,
+                    wins: {
+                        jackpot: 0,
+                        bigWin: 0,
+                        smallWin: 0
+                    },
+                    codesGenerated: []
+                };
+                gameManager.saveConfig();
+                refreshStats();
+                refreshCodeHistory();
+                
+                alert('統計データがクリアされました。');
+            }
+        }
+
+        // コード履歴の更新
+        function refreshCodeHistory() {
+            const codes = gameManager.statistics.codesGenerated;
+            const historyDiv = document.getElementById('codeHistory');
+            
+            if (codes.length === 0) {
+                historyDiv.innerHTML = '<div style="padding: 20px; text-align: center; color: #7f8c8d;">まだコードが生成されていません</div>';
+                return;
+            }
+            
+            const sortedCodes = codes.slice().reverse(); // 新しい順
+            historyDiv.innerHTML = sortedCodes.map(code => `
+                <div class="code-item">
+                    <div>
+                        <div class="code-value">${code.code}</div>
+                        <div class="code-timestamp">${new Date(code.timestamp).toLocaleString('ja-JP')}</div>
+                    </div>
+                    <div class="code-type ${code.type}">${code.type}</div>
+                </div>
+            `).join('');
+        }
+
+        // コードのエクスポート
+        function exportCodes() {
+            const codes = gameManager.statistics.codesGenerated;
+            if (codes.length === 0) {
+                alert('エクスポートするコードがありません。');
+                return;
+            }
+            
+            const csvContent = 'コード,タイプ,生成日時\n' + 
+                codes.map(code => `${code.code},${code.type},${code.timestamp}`).join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `slot_codes_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+        }
+
+        // コード履歴のクリア
+        function clearCodes() {
+            if (confirm('コード履歴をすべてクリアしますか？この操作は取り消せません。')) {
+                gameManager.statistics.codesGenerated = [];
+                gameManager.saveConfig();
+                refreshCodeHistory();
+                refreshStats();
+                
+                alert('コード履歴がクリアされました。');
+            }
+        }
+
+        // 新しいタブでゲームを開く
+        function openGameInNewTab() {
+            window.open('index.html', '_blank');
+        }
+
+        // 定期的な統計更新
+        setInterval(() => {
+            refreshStats();
+            refreshCodeHistory();
+        }, 5000);
+    </script>
+</body>
+</html>
+

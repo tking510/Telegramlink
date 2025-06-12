@@ -1,0 +1,35 @@
+{
+  "probabilities": {
+    "jackpot": 0.01,
+    "bigWin": 0.05,
+    "smallWin": 0.15,
+    "lose": 0.79
+  },
+  "winPatterns": {
+    "jackpot": {
+      "message": "🎉 JACKPOT! 🎉",
+      "codePrefix": "JP",
+      "multiplier": 1000,
+      "description": "全て同じ絵柄"
+    },
+    "bigWin": {
+      "message": "🎊 BIG WIN! 🎊",
+      "codePrefix": "BW",
+      "multiplier": 100,
+      "description": "2つ同じ絵柄"
+    },
+    "smallWin": {
+      "message": "✨ WIN! ✨",
+      "codePrefix": "SW",
+      "multiplier": 10,
+      "description": "特定の組み合わせ"
+    }
+  },
+  "symbols": ["🍒", "🍋", "🍊", "🍇", "🔔", "⭐", "💎", "7️⃣"],
+  "gameSettings": {
+    "spinDuration": 2000,
+    "reelStopDelay": 500,
+    "animationSpeed": 20
+  }
+}
+
