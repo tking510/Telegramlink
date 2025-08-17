@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ギャンブル占い（おすすめ＋クーポン）</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --fg:#111827;
+    --primary:#ef4444;
+    --secondary:#f59e0b;
+    --accent:#22c55e;
+    --soft:#f1f5f9;
+    --card:#ffffff;
+    --border:#e5e7eb;
+  }
+  *{ box-sizing:border-box; }
+  body{ background:var(--bg); color:var(--fg); font-family: ui-sans-serif, system-ui, "Noto Sans JP", Arial; margin:0; }
+  header{
+    position:sticky; top:0; z-index:10;
+    background: radial-gradient(120% 120% at 10% -10%, rgba(239,68,68,.15), transparent 50%),
+                radial-gradient(120% 120% at 110% -10%, rgba(245,158,11,.15), transparent 50%);
+    border-bottom:1px solid var(--border);
+    padding:16px 12px; text-align:center;
+  }
+  h1{ margin:0; font-size:clamp(20px, 5vw, 28px); letter-spacing:.5px; }
+  .container{ max-width:760px; margin:auto; padding:18px 16px 40px; }
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:18px;
+    margin:16px 0;
+    box-shadow: 0 6px 18px rgba(0,0,0,.06);
+  }
+  .q-title{ font-size:18px; font-weight:700; margin-bottom:12px; }
+  .opt{ display:block; margin:10px 0; padding:12px 14px; border-radius:12px; background:var(--soft); border:1px solid var(--border); }
+  .btn{ padding:12px 16px; border:none; border-radius:10px; cursor:pointer; color:#fff; font-weight:600; }
+  .next{ background: linear-gradient(135deg, var(--primary), var(--secondary)); box-shadow: 0 6px 16px rgba(239,68,68,.25); }
+  .prev{ background: linear-gradient(135deg, #64748b, #334155); }
+  .hidden{ display:none; }
+  .banner img{ width:100%; height:auto; border-radius:14px; display:block; margin:8px 0; border:1px solid var(--border); }
+  .coupon{ margin-top:16px; padding:14px; text-align:center; border:2px dashed var(--secondary); border-radius:12px; background: #fff7ed; }
+  .coupon .title{ font-weight:800; color:#b45309; margin-bottom:6px; }
+  .coupon code{ font-size:20px; font-weight:800; letter-spacing:1px; color:#9a3412; }
+  .reco{ margin-top:18px; text-align:center; }
+  .reco h3{ margin:10px 0 8px; font-size:20px; color:#111827; }
+  .reco img{ width:100%; max-width:520px; height:auto; border-radius:12px; display:block; margin:8px auto; border:1px solid var(--border); }
+  .linkbtn{ display:inline-block; padding:12px 18px; background: linear-gradient(135deg,#22c55e,#10b981); color:#fff; border-radius:10px; text-decoration:none; margin-top:10px; font-weight:700; box-shadow: 0 6px 16px rgba(16,185,129,.25); }
+  .muted{ opacity:.75; font-size:12px; text-align:center; margin-top:6px; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>🎉 ギャンブル占い（おすすめ＋クーポン）</h1>
+  </header>
+
+  <div class="container">
+    <section class="card" data-step="1">
+      <div class="q-title">① 普段ボーナスは使いますか？</div>
+      <label class="opt"><input type="radio" name="bonus" value="yes"> はい</label>
+      <label class="opt"><input type="radio" name="bonus" value="no"> いいえ</label>
+      <button class="btn next" onclick="next()">次へ</button>
+    </section>
+
+    <section class="card hidden" data-step="2">
+      <div class="q-title">② スロットとバカラをしますか？</div>
+      <label class="opt"><input type="radio" name="play" value="slot"> スロット</label>
+      <label class="opt"><input type="radio" name="play" value="baccarat"> バカラ</label>
+      <label class="opt"><input type="radio" name="play" value="both"> 両方する</label>
+      <label class="opt"><input type="radio" name="play" value="none"> どちらもしない</label>
+      <button class="btn prev" onclick="prev()">戻る</button>
+      <button class="btn next" onclick="next()">次へ</button>
+    </section>
+
+    <section class="card hidden" data-step="3">
+      <div class="q-title">③ パチンコ等のギャンブルもしますか？</div>
+      <label class="opt"><input type="radio" name="pachi" value="yes"> はい（パチンコもする）</label>
+      <label class="opt"><input type="radio" name="pachi" value="no"> いいえ（パチンコはしない）</label>
+      <button class="btn prev" onclick="prev()">戻る</button>
+      <button class="btn next" onclick="next()">次へ</button>
+    </section>
+
+    <section class="card hidden" data-step="4">
+      <div class="q-title">④ 高額出金の安心度かプロモーションのどちらが大事ですか？</div>
+      <label class="opt"><input type="radio" name="value" value="trust"> 高額出金の安心度</label>
+      <label class="opt"><input type="radio" name="value" value="promo"> プロモーション</label>
+      <button class="btn prev" onclick="prev()">戻る</button>
+      <button class="btn next" onclick="next()">次へ</button>
+    </section>
+
+    <section class="card hidden" data-step="5">
+      <div class="q-title">⑤ 今オンカジを行うことに不安はありますか？</div>
+      <label class="opt"><input type="radio" name="anx" value="yes"> ある</label>
+      <label class="opt"><input type="radio" name="anx" value="no"> ない</label>
+      <button class="btn prev" onclick="prev()">戻る</button>
+      <button class="btn next" onclick="finish()">結果を見る</button>
+    </section>
+
+    <section class="card hidden" data-step="result">
+      <div class="q-title" id="resultText">診断結果</div>
+      <div class="banner" id="banner"></div>
+
+      <div class="coupon">
+        <div class="title">🎟 おすすめサイトで使える限定クーポンコード（24時間限定）</div>
+        <code id="coupon">DSCXXXXXX</code>
+      </div>
+
+      <div class="reco">
+        <h3>あなたにおすすめのサイトはこちら</h3>
+        <img id="recoImg" src="" alt="Diamond Secret Club Banner" />
+        <div style="font-size:20px; margin:6px 0 2px;"><strong>DiamondSecretClub</strong></div>
+        <a class="linkbtn" href="https://www.diamond-secret.club/" target="_blank" rel="noopener">サイトへ</a>
+        <div class="muted">※ 画像はGitHub上のURLを参照します（下の説明を参照）。</div>
+      </div>
+    </section>
+  </div>
+
+<script>
+let step = 1;
+function showStep(n){
+  document.querySelectorAll('[data-step]').forEach(el=>el.classList.add('hidden'));
+  document.querySelector('[data-step="'+n+'"]').classList.remove('hidden');
+  step = n;
+}
+function next(){ showStep(step+1); }
+function prev(){ showStep(step-1); }
+
+/* ===== ここをあなたのGitHub生URLに変更してください =====
+   例: https://raw.githubusercontent.com/yourname/yourrepo/main/assets/
+*/
+let BASE = "https://raw.githubusercontent.com/USER/REPO/BRANCH/assets/";
+
+/* バナー画像（GitHubに置いたファイル名）
+   photo_1.jpg … ③パチンコ=YES のとき固定表示
+   photo_2.jpg … ②バカラ のとき固定表示
+   photo_3~6.jpg … その他はランダム表示
+   dsc_reco.jpg … 結果ページのおすすめ画像
+*/
+const FILES = {
+  banners: ["photo_1.jpg","photo_2.jpg","photo_3.jpg","photo_4.jpg","photo_5.jpg","photo_6.jpg"],
+  reco: "dsc_reco.jpg"
+};
+
+function gh(path){ return BASE + path; }
+
+function finish(){
+  const ans = {
+    bonus: getChecked('bonus'),
+    play: getChecked('play'),
+    pachi: getChecked('pachi'),
+    value: getChecked('value'),
+    anx: getChecked('anx')
+  };
+  for (const k in ans){ if(!ans[k]) { alert('未回答の設問があります'); return; } }
+
+  // バナー選定（1枚だけ）
+  const B = FILES.banners.map(f => gh(f));
+  let chosen = null;
+  if (ans.pachi === 'yes') {
+    chosen = B[0];
+  } else if (ans.play === 'baccarat') {
+    chosen = B[1];
+  } else {
+    const pool = B.slice(2);
+    chosen = pool[Math.floor(Math.random()*pool.length)];
+  }
+  const bannerBox = document.getElementById('banner');
+  bannerBox.innerHTML = '';
+  const img = new Image();
+  img.src = chosen;
+  img.alt = '診断バナー';
+  img.loading = 'lazy';
+  bannerBox.appendChild(img);
+
+  // クーポン（24時間限定の表記は上のタイトルに記載）
+  document.getElementById('coupon').textContent = 'DSC' + Math.random().toString(36).substr(2,8).toUpperCase();
+
+  const labels = [];
+  if (ans.play === 'baccarat') labels.push('🃏 バカラ派');
+  else if (ans.play === 'slot') labels.push('🎰 スロット派');
+  else if (ans.play === 'both') labels.push('🎲 なんでも派');
+  if (ans.value === 'trust') labels.push('🛡️ 安心重視');
+  if (ans.value === 'promo') labels.push('🎁 プロモ重視');
+  document.getElementById('resultText').textContent = labels.join(' / ') || '診断結果';
+
+  // おすすめ画像（GitHubのdsc_reco.jpg）
+  document.getElementById('recoImg').src = gh(FILES.reco);
+
+  showStep('result');
+}
+
+function getChecked(name){
+  const el=document.querySelector('input[name="'+name+'"]:checked');
+  return el?el.value:null;
+}
+</script>
+</body>
+</html>
