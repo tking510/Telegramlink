@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ギャンブル占い（おすすめ＋クーポン）</title>
+<title>ギャンブル占い（スクラッチクーポン付き）</title>
 <style>
   :root{
     --bg:#ffffff; --fg:#111827; --primary:#ef4444; --secondary:#f59e0b; --accent:#22c55e;
@@ -31,10 +31,123 @@
   .reco h3{ margin:10px 0 8px; font-size:20px; }
   .reco img{ width:100%; max-width:520px; border-radius:12px; margin:8px auto; }
   .linkbtn{ display:inline-block; padding:12px 18px; background: linear-gradient(135deg,#22c55e,#10b981); color:#fff; border-radius:10px; text-decoration:none; margin-top:10px; font-weight:700; }
+
+  /* スクラッチ機能のスタイル */
+  .scratch-title{ 
+    font-size:24px; 
+    font-weight:bold; 
+    color:var(--primary); 
+    text-align:center; 
+    margin:20px 0 10px; 
+  }
+  .scratch-subtitle{ 
+    text-align:center; 
+    color:#666; 
+    margin-bottom:20px; 
+    font-size:14px; 
+  }
+  .scratch-grid{ 
+    display:grid; 
+    grid-template-columns:repeat(3, 1fr); 
+    gap:15px; 
+    max-width:600px; 
+    margin:0 auto; 
+  }
+  .scratch-card{ 
+    position:relative; 
+    aspect-ratio:1.6/1; 
+    border-radius:12px; 
+    overflow:hidden; 
+    border:3px solid #ffd700; 
+    cursor:pointer; 
+    transition:transform 0.2s; 
+  }
+  .scratch-card:hover{ 
+    transform:scale(1.05); 
+  }
+  .scratch-card.disabled{ 
+    cursor:not-allowed; 
+    opacity:0.6; 
+  }
+  .scratch-card.selected{ 
+    border-color:#ff4444; 
+    box-shadow:0 0 20px rgba(255,68,68,0.5); 
+  }
+  .scratch-canvas{ 
+    width:100%; 
+    height:100%; 
+    position:absolute; 
+    top:0; 
+    left:0; 
+    z-index:2; 
+  }
+  .scratch-content{ 
+    position:absolute; 
+    top:0; 
+    left:0; 
+    width:100%; 
+    height:100%; 
+    display:flex; 
+    flex-direction:column; 
+    justify-content:center; 
+    align-items:center; 
+    font-weight:bold; 
+    z-index:1; 
+  }
+  .scratch-winner{ 
+    background: linear-gradient(135deg, #ffd700, #ffed4e); 
+    color:#8b4513; 
+  }
+  .scratch-loser{ 
+    background: linear-gradient(135deg, #6b7280, #9ca3af); 
+    color:#ffffff; 
+  }
+  .jackpot{ 
+    font-size:18px; 
+    animation:sparkle 1.5s infinite; 
+  }
+  .reset-btn{ 
+    background: linear-gradient(135deg, var(--secondary), var(--primary)); 
+    color:#fff; 
+    border:none; 
+    padding:12px 24px; 
+    border-radius:10px; 
+    font-weight:bold; 
+    cursor:pointer; 
+    margin:20px auto; 
+    display:block; 
+  }
+
+  @keyframes sparkle{
+    0%, 100% { transform:scale(1) rotate(0deg); }
+    50% { transform:scale(1.1) rotate(2deg); }
+  }
+
+  /* 当たり演出 */
+  .celebration{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+    z-index:1000;
+  }
+  .confetti{
+    position:absolute;
+    width:10px;
+    height:10px;
+    background:#ffd700;
+    animation:fall 3s linear infinite;
+  }
+  @keyframes fall{
+    0%{ transform:translateY(-100vh) rotate(0deg); opacity:1; }
+    100%{ transform:translateY(100vh) rotate(360deg); opacity:0; }
+  }
 </style>
 </head>
 <body>
-<header><h1>🎉 ギャンブル占い（おすすめ＋クーポン）</h1></header>
+<header><h1>🎉 ギャンブル占い（スクラッチクーポン付き）</h1></header>
 <div class="container">
 
 <section class="card" data-step="1">
@@ -82,10 +195,14 @@
   <div class="q-title" id="resultText">診断結果</div>
   <div class="banner" id="banner"></div>
 
-  <div class="coupon">
-    <div class="title">🎟 おすすめサイトで使える限定クーポンコード（24時間限定）</div>
-    <code id="coupon">DSCXXXXXX</code>
+  <div class="scratch-title">🏷️ スクラッチでクーポンをゲット！</div>
+  <div class="scratch-subtitle">銀色の部分を削ってクーポンコードを手に入れよう！<br>※一枚だけ削れます</div>
+  
+  <div class="scratch-grid" id="scratchGrid">
+    <!-- スクラッチカードがJavaScriptで生成される -->
   </div>
+
+  <button class="reset-btn hidden" id="resetBtn" onclick="resetScratch()">もう一度挑戦</button>
 
   <div class="reco">
     <h3>あなたにおすすめのサイトはこちら</h3>
@@ -97,8 +214,12 @@
 
 </div>
 
+<div class="celebration" id="celebration"></div>
+
 <script>
 let step=1;
+let scratchState = { selectedCard: null, isScratching: false, scratchedPercentage: 0 };
+
 function showStep(n){
   document.querySelectorAll('[data-step]').forEach(el=>el.classList.add('hidden'));
   document.querySelector('[data-step="'+n+'"]').classList.remove('hidden');
@@ -126,12 +247,15 @@ function finish(){
   img.src=chosen; img.alt='診断バナー'; img.loading='lazy';
   bannerBox.appendChild(img);
 
-  document.getElementById('coupon').textContent='DSC'+Math.random().toString(36).substr(2,8).toUpperCase();
   document.getElementById('resultText').textContent=buildLabels(ans);
   document.getElementById('recoImg').src=BASE+FILES.reco;
 
+  // スクラッチカード初期化
+  initScratchCards();
+  
   showStep('result');
 }
+
 function buildLabels(ans){
   const labels=[];
   if(ans.play==='baccarat') labels.push('🃏 バカラ派');
@@ -141,10 +265,246 @@ function buildLabels(ans){
   if(ans.value==='promo') labels.push('🎁 プロモ重視');
   return labels.join(' / ')||'診断結果';
 }
+
 function getChecked(name){
   const el=document.querySelector('input[name="'+name+'"]:checked');
   return el?el.value:null;
 }
+
+// スクラッチカード機能
+function initScratchCards(){
+  const grid = document.getElementById('scratchGrid');
+  grid.innerHTML = '';
+  scratchState = { selectedCard: null, isScratching: false, scratchedPercentage: 0 };
+  
+  for(let i = 0; i < 6; i++){
+    const card = createScratchCard(i);
+    grid.appendChild(card);
+  }
+}
+
+function createScratchCard(index){
+  const cardDiv = document.createElement('div');
+  cardDiv.className = 'scratch-card';
+  cardDiv.dataset.index = index;
+  
+  const content = document.createElement('div');
+  content.className = 'scratch-content scratch-winner';
+  content.innerHTML = `
+    <div class="jackpot">🎉 大当たり！</div>
+    <div>クーポン</div>
+    <div style="font-size:14px;">DSC${Math.random().toString(36).substr(2,6).toUpperCase()}</div>
+  `;
+  
+  const canvas = document.createElement('canvas');
+  canvas.className = 'scratch-canvas';
+  canvas.width = 200;
+  canvas.height = 125;
+  
+  cardDiv.appendChild(content);
+  cardDiv.appendChild(canvas);
+  
+  // 銀色の表面を描画
+  drawScratchSurface(canvas);
+  
+  cardDiv.addEventListener('click', () => selectCard(index));
+  
+  return cardDiv;
+}
+
+function drawScratchSurface(canvas){
+  const ctx = canvas.getContext('2d');
+  const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+  gradient.addColorStop(0, '#c0c0c0');
+  gradient.addColorStop(0.5, '#e8e8e8');
+  gradient.addColorStop(1, '#a8a8a8');
+  
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  // 削る前の文字
+  ctx.fillStyle = '#666';
+  ctx.font = 'bold 16px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('削ってね！', canvas.width/2, canvas.height/2);
+}
+
+function selectCard(index){
+  if(scratchState.selectedCard !== null || scratchState.isScratching) return;
+  
+  scratchState.selectedCard = index;
+  scratchState.isScratching = true;
+  
+  const selectedCard = document.querySelector(`[data-index="${index}"]`);
+  selectedCard.classList.add('selected');
+  
+  // 他のカードを無効化
+  document.querySelectorAll('.scratch-card').forEach((card, i) => {
+    if(i !== index) card.classList.add('disabled');
+  });
+  
+  // スクラッチ機能を有効化
+  enableScratch(selectedCard.querySelector('.scratch-canvas'));
+}
+
+function enableScratch(canvas){
+  const ctx = canvas.getContext('2d');
+  ctx.globalCompositeOperation = 'destination-out';
+  
+  let isDrawing = false;
+  let lastX = 0, lastY = 0;
+  
+  function startDrawing(e){
+    isDrawing = true;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    
+    if(e.touches){
+      lastX = (e.touches[0].clientX - rect.left) * scaleX;
+      lastY = (e.touches[0].clientY - rect.top) * scaleY;
+    } else {
+      lastX = (e.clientX - rect.left) * scaleX;
+      lastY = (e.clientY - rect.top) * scaleY;
+    }
+  }
+  
+  function draw(e){
+    if(!isDrawing) return;
+    
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    
+    let currentX, currentY;
+    if(e.touches){
+      currentX = (e.touches[0].clientX - rect.left) * scaleX;
+      currentY = (e.touches[0].clientY - rect.top) * scaleY;
+    } else {
+      currentX = (e.clientX - rect.left) * scaleX;
+      currentY = (e.clientY - rect.top) * scaleY;
+    }
+    
+    ctx.lineWidth = 30;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(currentX, currentY);
+    ctx.stroke();
+    
+    lastX = currentX;
+    lastY = currentY;
+    
+    // 削った面積をチェック
+    checkScratchProgress(canvas);
+  }
+  
+  function stopDrawing(){
+    isDrawing = false;
+  }
+  
+  // マウスイベント
+  canvas.addEventListener('mousedown', startDrawing);
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('mouseup', stopDrawing);
+  canvas.addEventListener('mouseout', stopDrawing);
+  
+  // タッチイベント
+  canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    startDrawing(e);
+  });
+  canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    draw(e);
+  });
+  canvas.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    stopDrawing();
+  });
+}
+
+function checkScratchProgress(canvas){
+  const ctx = canvas.getContext('2d');
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const pixels = imageData.data;
+  
+  let transparentPixels = 0;
+  for(let i = 3; i < pixels.length; i += 4){
+    if(pixels[i] === 0) transparentPixels++;
+  }
+  
+  const percentage = (transparentPixels / (canvas.width * canvas.height)) * 100;
+  scratchState.scratchedPercentage = percentage;
+  
+  // 30%以上削られたら完了
+  if(percentage > 30){
+    completeScratch();
+  }
+}
+
+function completeScratch(){
+  scratchState.isScratching = false;
+  
+  // 選択されたカードのcanvasを完全に削除
+  const selectedCard = document.querySelector(`[data-index="${scratchState.selectedCard}"]`);
+  const canvas = selectedCard.querySelector('.scratch-canvas');
+  canvas.style.display = 'none';
+  
+  // 他のカードをハズレ表示
+  document.querySelectorAll('.scratch-card').forEach((card, i) => {
+    if(i !== scratchState.selectedCard){
+      const content = card.querySelector('.scratch-content');
+      content.className = 'scratch-content scratch-loser';
+      content.innerHTML = `
+        <div>ハズレ</div>
+        <div style="font-size:12px;">また挑戦してね</div>
+      `;
+      const canvas = card.querySelector('.scratch-canvas');
+      canvas.style.display = 'none';
+    }
+  });
+  
+  // お祝い演出
+  celebrate();
+  
+  // リセットボタンを表示
+  document.getElementById('resetBtn').classList.remove('hidden');
+}
+
+function celebrate(){
+  const celebration = document.getElementById('celebration');
+  celebration.innerHTML = '';
+  
+  // 紙吹雪を作成
+  for(let i = 0; i < 50; i++){
+    const confetti = document.createElement('div');
+    confetti.className = 'confetti';
+    confetti.style.left = Math.random() * 100 + '%';
+    confetti.style.animationDelay = Math.random() * 3 + 's';
+    confetti.style.backgroundColor = ['#ffd700', '#ff6b6b', '#4ecdc4', '#45b7d1'][Math.floor(Math.random() * 4)];
+    celebration.appendChild(confetti);
+  }
+  
+  // 3秒後に削除
+  setTimeout(() => {
+    celebration.innerHTML = '';
+  }, 3000);
+}
+
+function resetScratch(){
+  document.getElementById('resetBtn').classList.add('hidden');
+  initScratchCards();
+}
 </script>
 </body>
 </html>
+    <script id="html_badge_script1">
+        window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
+            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDlozHjypwsswtBuvyXSyfcTJRQ0xl%2FDH4w0aCYbXAPMXX1Qs7vY%2FUv1A6m9jsuRAsT%2B2ULYcTDiNx%2FdVaWAYW1ILCkC0JW8Kq7nzKda9CyEFjtIYritZO27U7TTNIeewKAd9Hw%2FZYmxPkYQY2%2BFMcsGexa8QSb7gos3lwLHMawkm0RxofijS8qeg2C2EsjCuG9ETzdfNa%2BVnI%2FzQFOuIw0llFqnDZBioxne20IKs%2BjPP2090rld8tErynHacJAIXPVVS%2F2xpTSHoM%2BkWzxMYome2B3N8ozGG1no5fL%2F5QZME21vBIUySYHM1u6fToWLvpbSQKDoOpneg6C0B%2FIWQJ8GfGxO0%2FS%2BH2a3e4uMGT5c4J1zAztMliVVYS9ub1jxTt2oEf3H1I%2F451RyZDGxTPQKJtDQzojESzBBFOKPI1%2Bmurwyw8Phe1bOm3rTJao9p3rliD6nTi6wrWyo9LxxyPdbYhoeXDcZhLKx%2FOsC9inpGuOPwnd%2BYHZnuT%2F%2FouDkJkA%3D%3D";
+        window.__genspark_locale = "ja-JP";
+        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDlozHjypwsswtBuvyXSyfcTJRQ0xl/DH4w0aCYbXAPMXX1Qs7vY/Uv1A6m9jsuRAsT+2ULYcTDiNx/dVaWAYW1ILCkC0JW8Kq7nzKda9CyEFjtIYritZO27U7TTNIeewKAd9Hw/ZYmxPkYQY2+FMcsGexa8QSb7gos3lwLHMawkm0RxofijS8qeg2C2EsjCuG9ETzdfNa+VnI/zQFOuIw0llFqnDZBioxne20IKs+jPP2090rld8tErynHacJAIXPVVS/2xpTSHoM+kWzxMYome2B3N8ozGG1no5fL/5QZME21vBIUySYHM1u6fToWLvpbSQKDoOpneg6C0B/IWQJ8GfGxO0/S+H2a3e4uMGT5c4J1zAztMliVVYS9ub1jxTt2oEf3H1I/451RyZDGxTPQKJtDQzojESzBBFOKPI1+murwyw8Phe1bOm3rTJao9p3rliD6nTi6wrWyo9LxxyPdbYhoeXDcZhLKx/OsC9inpGuOPwnd+YHZnuT//ouDkJkA==";
+    </script>
+    
+    <script id="html_notice_dialog_script" src="https://www.genspark.ai/notice_dialog.js"></script>
+    
