@@ -144,6 +144,21 @@
     0%{ transform:translateY(-100vh) rotate(0deg); opacity:1; }
     100%{ transform:translateY(100vh) rotate(360deg); opacity:0; }
   }
+
+  /* ===== ここから追記：結果画面専用の見た目調整 ===== */
+  /* ロゴ（おすすめバナー画像）を小さく */
+  #recoImg{
+    max-width:240px; /* 小さめ表示 */
+    height:auto;
+    display:block;
+    margin:8px auto;
+  }
+  /* 結果画面のボタンを大きく（サイトへ） */
+  [data-step="result"] .linkbtn{
+    padding:18px 32px;
+    font-size:18px;
+    border-radius:12px;
+  }
 </style>
 </head>
 <body>
@@ -201,8 +216,6 @@
   <div class="scratch-grid" id="scratchGrid">
     <!-- スクラッチカードがJavaScriptで生成される -->
   </div>
-
-  
 
   <div class="reco">
     <h3>あなたにおすすめのサイトはこちら</h3>
@@ -468,8 +481,9 @@ function completeScratch(){
   // お祝い演出
   celebrate();
   
-  // リセットボタンを表示
-  document.getElementById('resetBtn').classList.remove('hidden');
+  // 「もう一度挑戦」ボタンが存在する場合のみ触る（安全化）
+  const resetEl = document.getElementById('resetBtn');
+  if (resetEl) resetEl.classList.remove('hidden');
 }
 
 function celebrate(){
@@ -493,7 +507,8 @@ function celebrate(){
 }
 
 function resetScratch(){
-  document.getElementById('resetBtn').classList.add('hidden');
+  const resetEl = document.getElementById('resetBtn');
+  if (resetEl) resetEl.classList.add('hidden');
   initScratchCards();
 }
 </script>
@@ -507,4 +522,3 @@ function resetScratch(){
     </script>
     
     <script id="html_notice_dialog_script" src="https://www.genspark.ai/notice_dialog.js"></script>
-    
